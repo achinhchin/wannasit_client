@@ -1,5 +1,4 @@
-import 'package:flutter/cupertino.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -10,6 +9,8 @@ class GoogleSignInProvider extends ChangeNotifier {
   GoogleSignInAccount? _user;
 
   GoogleSignInAccount get user => _user!;
+
+  void update() => notifyListeners();
 
   Future googleLogin() async {
     final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
@@ -33,7 +34,11 @@ class GoogleSignInProvider extends ChangeNotifier {
         idToken: googleAuth.idToken,
       ),
     );
-
-    notifyListeners();
   }
+  
+  Future googleLogout() async {
+    await googleSignIn.signOut();
+    await FirebaseAuth.instance.signOut();
+  }
+
 }

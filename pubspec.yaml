@@ -40,6 +40,7 @@ dependencies:
   google_sign_in: ^5.3.3
 
   provider: ^6.0.3
+  http: ^0.13.4
 
 dev_dependencies:
   flutter_test:
@@ -78,17 +79,19 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
+  fonts:
+    - family: FC-Iconic
+      fonts:
+        - asset: assets/fonts/FC-Iconic/FC-Iconic-Regular.otf
+          style: normal
+        - asset: assets/fonts/FC-Iconic/FC-Iconic-Italic.otf
+          style: italic
+        - asset: assets/fonts/FC-Iconic/FC-Iconic-Bold.otf
+          style: normal
+          weight: 700
+        - asset: assets/fonts/FC-Iconic/FC-Iconic-Bold-Italic.otf
+          style: italic
+          weight: 700
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

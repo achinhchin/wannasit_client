@@ -54,8 +54,6 @@ class _SignInTabState extends State<SignInTab>
               padding: EdgeInsets.symmetric(vertical: 10),
               child: FlutterLogo(),
             ),
-            titleSpacing: 5,
-            centerTitle: false,
             title: const Text("Sign In"),
           ),
           body: LayoutBuilder(
@@ -87,7 +85,8 @@ class _SignInTabState extends State<SignInTab>
                             padding: const EdgeInsets.all(10),
                             child: ElevatedButton.icon(
                               onPressed: () {
-                                final GoogleSignInProvider googleSignInProvider =
+                                final GoogleSignInProvider
+                                    googleSignInProvider =
                                     Provider.of<GoogleSignInProvider>(context,
                                         listen: false);
                                 final SignInColorSchemeProvider
@@ -105,24 +104,23 @@ class _SignInTabState extends State<SignInTab>
                                     if (error == "notsamsenmail") {
                                       signInColorSchemeProvider.setColorScheme =
                                           Colors.red;
-                                      await showDialog(
-                                        context: context,
-                                        builder: ((context) => AlertDialog(
-                                              title: const Text(
-                                                "Wrong Mail",
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold),
-                                              ),
-                                              content: const Text(
-                                                  "You have to use @samsenwit.ac.th mail to sign in"),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () =>
-                                                      Navigator.pop(context),
-                                                  child: const Text("Ok"),
-                                                )
-                                              ],
-                                            )),
+                                      await showMyDiaglog(
+                                        child: AlertDialog(
+                                          title: const Text(
+                                            "Wrong Mail",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          content: const Text(
+                                              "You have to use @samsenwit.ac.th mail to sign in."),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                              child: const Text("Ok"),
+                                            )
+                                          ],
+                                        ),
                                       );
                                       signInColorSchemeProvider.setColorScheme =
                                           signInColorSchemeProvider
@@ -130,9 +128,8 @@ class _SignInTabState extends State<SignInTab>
                                     } else {
                                       signInColorSchemeProvider.setColorScheme =
                                           Colors.red;
-                                      await showDialog(
-                                        context: context,
-                                        builder: (context) => AlertDialog(
+                                      await showMyDiaglog(
+                                        child: AlertDialog(
                                           title: const Text("Error"),
                                           content: const Text(
                                               ":(\nSomething went wrong!\nPlease try again."),
@@ -152,7 +149,9 @@ class _SignInTabState extends State<SignInTab>
                                   }
 
                                   _blurAnimationController.value = 1;
-                                  _blurAnimationController.reverse();
+                                  await _blurAnimationController.reverse();
+
+                                  googleSignInProvider.update();
                                 }();
                               },
                               label: const Text("Sign In with google"),
@@ -194,6 +193,31 @@ class _SignInTabState extends State<SignInTab>
           ),
         )
       ],
+    );
+  }
+
+  Future<void> showMyDiaglog({required Widget child}) async {
+    await Navigator.of(context).push(
+      PageRouteBuilder(
+        barrierDismissible: false,
+        opaque: false,
+        barrierColor: Colors.black26,
+        transitionDuration: const Duration(seconds: 1),
+        reverseTransitionDuration: const Duration(seconds: 1),
+        pageBuilder: (context, animation, secondaryAnimation) => child,
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            SlideTransition(
+          position: animation.drive(
+            Tween<Offset>(
+              begin: const Offset(0, -1),
+              end: const Offset(0, 0),
+            ).chain(
+              CurveTween(curve: Curves.elasticOut),
+            ),
+          ),
+          child: child,
+        ),
+      ),
     );
   }
 

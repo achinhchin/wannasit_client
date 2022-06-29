@@ -6,9 +6,11 @@ import 'package:provider/provider.dart';
 //providers
 import 'package:wannasit_client/providers/googleSignInProvider/googleSignInProvider.dart';
 import 'package:wannasit_client/providers/signInColorSchemeProvider/signInColorSchemeProvider.dart';
+import 'package:wannasit_client/providers/homePageColorSchemeProvider/homePageColorSchemeProvider.dart';
 
 //pages
-import './pages/signInPage/signInPage.dart';
+import 'package:wannasit_client/pages/signInPage/signInPage.dart';
+import 'package:wannasit_client/pages/homePage/homePage.dart';
 
 void main() async {
   runApp(const App());
@@ -30,14 +32,62 @@ class App extends StatelessWidget {
               ),
               ChangeNotifierProvider(
                 create: (context) => SignInColorSchemeProvider(),
-              )
+              ),
+              ChangeNotifierProvider(
+                create: (context) => HomePageColorSchemeProvider(),
+              ),
             ],
             child: StreamBuilder(
               stream: FirebaseAuth.instance.authStateChanges(),
               builder: (context, snapshot) {
-                if (false) {
-                  return const MaterialApp(
-                    home: Text("test"),
+                if (snapshot.hasData &&
+                    Provider.of<GoogleSignInProvider>(context).isWelcome) {
+                  final HomePageColorSchemeProvider
+                      homePageColorSchemeProvider =
+                      Provider.of<HomePageColorSchemeProvider>(context);
+                  return MaterialApp(
+                    title: "Wannasit",
+                    home: const HomePage(),
+                    theme: ThemeData(
+                      useMaterial3: true,
+                      brightness: Brightness.light,
+                      colorSchemeSeed: homePageColorSchemeProvider.colorScheme,
+                      textTheme: TextTheme(
+                        titleLarge: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                        bodyLarge: TextStyle(
+                          color: Colors.blue[300],
+                          fontWeight: FontWeight.bold,
+                          fontSize: 30,
+                        ),
+                      ),
+                      appBarTheme: AppBarTheme(
+                        color: Theme.of(context).secondaryHeaderColor,
+                        titleSpacing: 5,
+                        centerTitle: false,
+                      ),
+                    ),
+                    darkTheme: ThemeData(
+                      useMaterial3: true,
+                      brightness: Brightness.dark,
+                      colorSchemeSeed: homePageColorSchemeProvider.colorScheme,
+                      textTheme: TextTheme(
+                        titleLarge: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                        bodyLarge: TextStyle(
+                          color: Colors.blue[300],
+                          fontWeight: FontWeight.bold,
+                          fontSize: 30,
+                        ),
+                      ),
+                      appBarTheme: AppBarTheme(
+                        color: Theme.of(context).primaryColorDark,
+                        titleSpacing: 5,
+                        centerTitle: false,
+                      ),
+                    ),
                   );
                 } else {
                   final SignInColorSchemeProvider signInColorSchemeProvider =
@@ -49,13 +99,19 @@ class App extends StatelessWidget {
                       brightness: Brightness.light,
                       colorSchemeSeed: signInColorSchemeProvider.colorScheme,
                       textTheme: TextTheme(
-                        titleLarge:
-                            const TextStyle(fontWeight: FontWeight.bold),
+                        titleLarge: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
                         bodyLarge: TextStyle(
                           color: Colors.blue[300],
                           fontWeight: FontWeight.bold,
                           fontSize: 30,
                         ),
+                      ),
+                      appBarTheme: AppBarTheme(
+                        color: Theme.of(context).secondaryHeaderColor,
+                        titleSpacing: 5,
+                        centerTitle: false,
                       ),
                     ),
                     darkTheme: ThemeData(
@@ -63,13 +119,19 @@ class App extends StatelessWidget {
                       brightness: Brightness.dark,
                       colorSchemeSeed: signInColorSchemeProvider.colorScheme,
                       textTheme: TextTheme(
-                        titleLarge:
-                            const TextStyle(fontWeight: FontWeight.bold),
+                        titleLarge: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
                         bodyLarge: TextStyle(
                           color: Colors.blue[300],
                           fontWeight: FontWeight.bold,
                           fontSize: 30,
                         ),
+                      ),
+                      appBarTheme: AppBarTheme(
+                        color: Theme.of(context).primaryColorDark,
+                        titleSpacing: 5,
+                        centerTitle: false,
                       ),
                     ),
                     home: const SignInPage(),

@@ -26,7 +26,7 @@ class _SignInPageState extends State<SignInPage>
       initialIndex: 0,
       vsync: this,
       length: 2,
-      animationDuration: const Duration(milliseconds: 300),
+      animationDuration: const Duration(milliseconds: 500),
     );
   }
 

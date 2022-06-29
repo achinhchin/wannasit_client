@@ -1,9 +1,12 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/rendering.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
 
 //providers
-import 'package:wannasit_client/providers/signInColorSchemeProvider/signInColorSchemeProvider.dart';
+import 'package:wannasit_client/providers/googleSignInProvider/googleSignInProvider.dart';
 
 class WelcomeTab extends StatelessWidget {
   const WelcomeTab({super.key});
@@ -11,14 +14,14 @@ class WelcomeTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final User user = FirebaseAuth.instance.currentUser!;
+    final GoogleSignInProvider googleSignInProvider =
+        Provider.of<GoogleSignInProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         leading: const Padding(
           padding: EdgeInsets.symmetric(vertical: 10),
           child: FlutterLogo(),
         ),
-        titleSpacing: 5,
-        centerTitle: false,
         title: const Text("Welcome"),
       ),
       body: LayoutBuilder(
@@ -59,12 +62,21 @@ class WelcomeTab extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           TextButton(
-                            onPressed: () => FirebaseAuth.instance.signOut(),
+                            onPressed: () async {
+                              await googleSignInProvider.googleLogout();
+                              googleSignInProvider.isWelcome = true;
+                              googleSignInProvider.update();
+                            },
                             child: const Text("Logout"),
                           ),
-                          const SizedBox(width: 10,),
+                          const SizedBox(
+                            width: 10,
+                          ),
                           ElevatedButton(
-                            onPressed: () => null,
+                            onPressed: () {
+                              googleSignInProvider.isWelcome = true;
+                              googleSignInProvider.update();
+                            },
                             child: const Text("Continue"),
                           ),
                         ],
