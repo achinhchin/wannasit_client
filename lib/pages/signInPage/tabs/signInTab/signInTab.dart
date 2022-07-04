@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -21,6 +22,8 @@ class _SignInTabState extends State<SignInTab>
   late Animation<double> _blurAnimation;
   late Animation<Color?> _colorAnimtaion;
 
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -29,11 +32,11 @@ class _SignInTabState extends State<SignInTab>
       duration: const Duration(milliseconds: 300),
     );
     _blurCurvedAnimation = CurvedAnimation(
-        curve: Curves.easeOut, parent: _blurAnimationController);
-    _blurAnimation = Tween<double>(
-      begin: 0,
-      end: 7.5,
-    ).animate(_blurCurvedAnimation);
+      curve: Curves.easeOut,
+      parent: _blurAnimationController,
+    );
+    _blurAnimation =
+        Tween<double>(begin: 0, end: 2 * math.pi).animate(_blurCurvedAnimation);
   }
 
   @override
@@ -59,7 +62,9 @@ class _SignInTabState extends State<SignInTab>
           body: LayoutBuilder(
             builder: (context, bodyConstraints) {
               return Scrollbar(
+                controller: _scrollController,
                 child: SingleChildScrollView(
+                  controller: _scrollController,
                   physics: const BouncingScrollPhysics(),
                   child: ConstrainedBox(
                     constraints:
@@ -177,21 +182,11 @@ class _SignInTabState extends State<SignInTab>
         ),
         AnimatedBuilder(
           animation: _blurAnimationController,
-          builder: (BuildContext context, Widget? child) => Visibility(
-            visible: _blurAnimationController.value > 0,
-            child: Positioned.fill(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(
-                  sigmaX: _blurAnimation.value,
-                  sigmaY: _blurAnimation.value,
-                ),
-                child: Container(
-                  color: _colorAnimtaion.value,
-                ),
-              ),
-            ),
-          ),
-        )
+          builder: (context, child) {
+            print(_blurAnimation.value);
+            return Container();
+          },
+        ),
       ],
     );
   }
@@ -224,6 +219,7 @@ class _SignInTabState extends State<SignInTab>
   @override
   void dispose() {
     _blurAnimationController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 }

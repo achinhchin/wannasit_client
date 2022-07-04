@@ -1,9 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 //widgets
 import './widgets/myTable/myTable.dart';
+
+//providers
+import 'package:wannasit_client/providers/googleSignInProvider/googleSignInProvider.dart';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -21,6 +25,9 @@ class _HomeTabState extends State<HomeTab> {
   ];
 
   List<List<List<List<int>>>>? tablesState;
+
+  ScrollController _tablesScrollController = ScrollController();
+  ScrollController _suggestScrollController = ScrollController();
 
   @override
   void initState() {
@@ -78,7 +85,9 @@ class _HomeTabState extends State<HomeTab> {
             ),
           ),
           IconButton(
-            onPressed: () => {},
+            onPressed: () =>
+                Provider.of<GoogleSignInProvider>(context, listen: false)
+                    .googleLogout(),
             icon: CircleAvatar(
               backgroundImage: NetworkImage(user.photoURL!),
             ),
@@ -87,7 +96,9 @@ class _HomeTabState extends State<HomeTab> {
         bottom: PreferredSize(
           preferredSize: const Size(0, 55),
           child: Scrollbar(
+            controller: _suggestScrollController,
             child: SingleChildScrollView(
+              controller: _suggestScrollController,
               scrollDirection: Axis.horizontal,
               physics: const BouncingScrollPhysics(),
               child: Row(
@@ -237,7 +248,9 @@ class _HomeTabState extends State<HomeTab> {
                         ],
                       );
                       return Scrollbar(
+                        controller: _tablesScrollController,
                         child: SingleChildScrollView(
+                          controller: _tablesScrollController,
                           scrollDirection:
                               isPortrait ? Axis.vertical : Axis.horizontal,
                           physics: const BouncingScrollPhysics(),
