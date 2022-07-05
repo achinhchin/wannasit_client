@@ -18,7 +18,7 @@ class GoogleSignInProvider extends ChangeNotifier {
     if (googleUser.email.length <= 16 ||
         googleUser.email.substring(googleUser.email.length - 16) !=
             "@samsenwit.ac.th") {
-      googleSignIn.signOut();
+      await googleSignIn.disconnect();
       throw ("notsamsenmail");
     }
     _user = googleUser;
@@ -40,5 +40,4 @@ class GoogleSignInProvider extends ChangeNotifier {
     await googleSignIn.disconnect();
     await FirebaseAuth.instance.signOut();
   }
-
 }

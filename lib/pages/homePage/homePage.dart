@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage>
     return TabBarView(
       controller: _tabController,
       physics: const NeverScrollableScrollPhysics(),
-      children: const [HomeTab(), SettingsTab()],
+      children: [HomeTab(_tabController), SettingsTab(_tabController)],
     );
   }
 }

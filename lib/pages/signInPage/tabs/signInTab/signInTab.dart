@@ -36,7 +36,7 @@ class _SignInTabState extends State<SignInTab>
       parent: _blurAnimationController,
     );
     _blurAnimation =
-        Tween<double>(begin: 0, end: 2 * math.pi).animate(_blurCurvedAnimation);
+        Tween<double>(begin: 0, end: 7.5).animate(_blurCurvedAnimation);
   }
 
   @override
@@ -183,8 +183,21 @@ class _SignInTabState extends State<SignInTab>
         AnimatedBuilder(
           animation: _blurAnimationController,
           builder: (context, child) {
-            print(_blurAnimation.value);
-            return Container();
+            if (_blurAnimationController.value > 0) {
+              return Positioned.fill(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(
+                    sigmaX: _blurAnimation.value,
+                    sigmaY: _blurAnimation.value,
+                  ),
+                  child: Container(
+                    color: _colorAnimtaion.value,
+                  ),
+                ),
+              );
+            }else {
+              return const SizedBox.shrink();
+            }
           },
         ),
       ],
@@ -194,11 +207,11 @@ class _SignInTabState extends State<SignInTab>
   Future<void> showMyDiaglog({required Widget child}) async {
     await Navigator.of(context).push(
       PageRouteBuilder(
-        barrierDismissible: false,
+        barrierDismissible: true,
         opaque: false,
         barrierColor: Colors.black26,
         transitionDuration: const Duration(seconds: 1),
-        reverseTransitionDuration: const Duration(seconds: 1),
+        reverseTransitionDuration: const Duration(milliseconds: 500),
         pageBuilder: (context, animation, secondaryAnimation) => child,
         transitionsBuilder: (context, animation, secondaryAnimation, child) =>
             SlideTransition(
