@@ -3,34 +3,45 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 
+//models
+import 'package:wannasit_client/models/appThemeModel/appThemeModel.dart';
+
 //providers
 import 'package:wannasit_client/providers/googleSignInProvider/googleSignInProvider.dart';
 import 'package:wannasit_client/providers/signInColorSchemeProvider/signInColorSchemeProvider.dart';
-import 'package:wannasit_client/providers/homePageColorSchemeProvider/homePageColorSchemeProvider.dart';
+import 'package:wannasit_client/providers/appThemeProvider/appThemeProvider.dart';
 
 //pages
 import 'package:wannasit_client/pages/signInPage/signInPage.dart';
 import 'package:wannasit_client/pages/homePage/homePage.dart';
 
-void main() {
-  runApp(const App());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final AppThemeProvider appThemeProvider = AppThemeProvider();
+  await appThemeProvider.init();
+  runApp(App(appThemeProvider));
 }
 
 class App extends StatelessWidget {
-  const App({super.key});
+  final AppThemeProvider appThemeProvider;
+  const App(this.appThemeProvider, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: Firebase.initializeApp(
+      future: () async {
+        await Firebase.initializeApp(
           options: const FirebaseOptions(
-              apiKey: "AIzaSyCxTa7DLX3NFegt2BW5GOb9ZBXl2hsIavg",
-              authDomain: "wannas-5e2c4.firebaseapp.com",
-              projectId: "wannas-5e2c4",
-              storageBucket: "wannas-5e2c4.appspot.com",
-              messagingSenderId: "358207789317",
-              appId: "1:358207789317:web:da2cbb34de3427ec273f6c",
-              measurementId: "G-EWET20HGWC")),
+            apiKey: "AIzaSyCxTa7DLX3NFegt2BW5GOb9ZBXl2hsIavg",
+            authDomain: "wannas-5e2c4.firebaseapp.com",
+            projectId: "wannas-5e2c4",
+            storageBucket: "wannas-5e2c4.appspot.com",
+            messagingSenderId: "358207789317",
+            appId: "1:358207789317:web:da2cbb34de3427ec273f6c",
+            measurementId: "G-EWET20HGWC",
+          ),
+        );
+      }(),
       builder: (context, firebaseInitSnapshot) {
         if (firebaseInitSnapshot.connectionState == ConnectionState.done) {
           return MultiProvider(
@@ -42,7 +53,7 @@ class App extends StatelessWidget {
                 create: (context) => SignInColorSchemeProvider(),
               ),
               ChangeNotifierProvider(
-                create: (context) => HomePageColorSchemeProvider(),
+                create: (context) => appThemeProvider,
               ),
             ],
             child: StreamBuilder(
@@ -50,28 +61,26 @@ class App extends StatelessWidget {
               builder: (context, snapshot) {
                 if (snapshot.hasData &&
                     Provider.of<GoogleSignInProvider>(context).isWelcome) {
-                  final HomePageColorSchemeProvider
-                      homePageColorSchemeProvider =
-                      Provider.of<HomePageColorSchemeProvider>(context);
+                  final AppThemeModel appTheme =
+                      Provider.of<AppThemeProvider>(context).appTheme;
                   return MaterialApp(
                     title: "Wannasit",
                     home: const HomePage(),
+                    themeMode: appTheme.themeMode,
                     theme: ThemeData(
                       useMaterial3: true,
                       brightness: Brightness.light,
-                      colorSchemeSeed: homePageColorSchemeProvider.colorScheme,
-                      textTheme: TextTheme(
-                        titleLarge: const TextStyle(
+                      colorSchemeSeed: Color(appTheme.lightColor),
+                      textTheme: const TextTheme(
+                        titleLarge: TextStyle(
                           fontWeight: FontWeight.bold,
                         ),
                         bodyLarge: TextStyle(
-                          color: Colors.blue[300],
                           fontWeight: FontWeight.bold,
                           fontSize: 30,
                         ),
                       ),
-                      appBarTheme: AppBarTheme(
-                        color: Theme.of(context).secondaryHeaderColor,
+                      appBarTheme: const AppBarTheme(
                         titleSpacing: 5,
                         centerTitle: false,
                       ),
@@ -79,19 +88,19 @@ class App extends StatelessWidget {
                     darkTheme: ThemeData(
                       useMaterial3: true,
                       brightness: Brightness.dark,
-                      colorSchemeSeed: homePageColorSchemeProvider.colorScheme,
-                      textTheme: TextTheme(
-                        titleLarge: const TextStyle(
+                      colorSchemeSeed: Color(
+                        appTheme.darkColor,
+                      ),
+                      textTheme: const TextTheme(
+                        titleLarge: TextStyle(
                           fontWeight: FontWeight.bold,
                         ),
                         bodyLarge: TextStyle(
-                          color: Colors.blue[300],
                           fontWeight: FontWeight.bold,
                           fontSize: 30,
                         ),
                       ),
-                      appBarTheme: AppBarTheme(
-                        color: Theme.of(context).primaryColorDark,
+                      appBarTheme: const AppBarTheme(
                         titleSpacing: 5,
                         centerTitle: false,
                       ),

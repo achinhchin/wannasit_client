@@ -1,10 +1,14 @@
+import 'dart:convert';
 import 'dart:ui';
 import 'dart:math' as math;
+import "dart:async";
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:wannasit_client/models/chairPositionModel/chairPositionModel.dart';
+import 'package:wannasit_client/providers/chairsStateProvider/chairsStateProvider.dart';
 
 //widgets
 import './widgets/myTable/myTable.dart';
@@ -21,11 +25,13 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
+  bool connectServer = true;
+  final User user = FirebaseAuth.instance.currentUser!;
   final List<List<dynamic>> suggestCard = [
     [Colors.green[300], "Avaliable chair"],
     [Colors.yellow[300], "Reserved chair"],
     [Colors.blue[300], "Your reserved chair"],
-    [Colors.red[300], "Not avaliable chair"]
+    [Colors.red[300], "Being seated chair"]
   ];
 
   late AnimationController _blurAnimationController;
@@ -39,43 +45,13 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
   ScrollController _tablesScrollController = ScrollController();
   ScrollController _suggestScrollController = ScrollController();
 
-  List<List<List<List<int>>>>? tablesState;
+  ChairsStateProvider chairsStateProvider = ChairsStateProvider();
+
+  Function()? updateTableStatePopup;
 
   @override
   void initState() {
     super.initState();
-    tablesState = [
-      [
-        [
-          [0, 0, 0],
-          [0, 0, 0]
-        ],
-        [
-          [0, 0, 0],
-          [0, 0, 0]
-        ]
-      ],
-      [
-        [
-          [0, 0, 0],
-          [0, 0, 0]
-        ],
-        [
-          [0, 0, 0],
-          [0, 0, 0]
-        ]
-      ],
-      [
-        [
-          [0, 0, 0],
-          [0, 0, 0]
-        ],
-        [
-          [0, 0, 0],
-          [0, 0, 0]
-        ]
-      ]
-    ];
     _blurAnimationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
@@ -98,6 +74,27 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
         curve: Curves.easeOut,
       ),
     );
+
+    syncData();
+  }
+
+  Future<void> syncData() async {
+    if (connectServer) {
+      await updateData();
+
+      await Future.delayed(const Duration(seconds: 2));
+      syncData();
+    }
+  }
+
+  Future<void> updateData() async {
+    chairsStateProvider.chairsState = jsonDecode((await http.post(
+      Uri.parse("http://192.168.25.199/wannasit"),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({"from": "client", "for": "get", "uid": user.uid}),
+    ))
+        .body)["chairsState"];
+    setState(() {});
   }
 
   @override
@@ -110,7 +107,7 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
     ).animate(
       _blurCurvedAnimation,
     );
-    final User user = FirebaseAuth.instance.currentUser!;
+
     return Stack(
       children: [
         Scaffold(
@@ -133,7 +130,7 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
                         angle: _settingAnimation.value,
                         child: Icon(
                           Icons.settings,
-                          color: Theme.of(context).primaryColor,
+                          color: Theme.of(context).colorScheme.secondary,
                           size: 40,
                         ),
                       );
@@ -290,22 +287,22 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
           body: SafeArea(
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 500),
-              child: tablesState != null
+              child: chairsStateProvider.chairsState != null
                   ? OrientationBuilder(
                       builder: (context, orientation) {
                         bool isPortrait = orientation == Orientation.portrait;
                         return LayoutBuilder(
                           builder: (context, bodyConstraints) {
-                            final List<List<EdgeInsets>> tableChairSize = [
+                            final List<List<dynamic>> tableChairSize = [
                               [
-                                EdgeInsets.symmetric(
-                                  horizontal: isPortrait
-                                      ? bodyConstraints.maxWidth * .2
-                                      : bodyConstraints.maxHeight * .1,
-                                  vertical: isPortrait
-                                      ? bodyConstraints.maxWidth * .1
+                                {
+                                  "width": isPortrait
+                                      ? bodyConstraints.maxWidth * .4
                                       : bodyConstraints.maxHeight * .2,
-                                ),
+                                  "height": isPortrait
+                                      ? bodyConstraints.maxWidth * .2
+                                      : bodyConstraints.maxHeight * .4,
+                                },
                                 EdgeInsets.symmetric(
                                   horizontal: isPortrait
                                       ? bodyConstraints.maxWidth * .025
@@ -316,14 +313,14 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
                                 )
                               ],
                               [
-                                EdgeInsets.symmetric(
-                                  horizontal: isPortrait
-                                      ? bodyConstraints.maxWidth * .05
-                                      : bodyConstraints.maxHeight * .05,
-                                  vertical: isPortrait
-                                      ? bodyConstraints.maxWidth * .05
-                                      : bodyConstraints.maxHeight * .05,
-                                ),
+                                {
+                                  "width": isPortrait
+                                      ? bodyConstraints.maxWidth * .1
+                                      : bodyConstraints.maxHeight * .1,
+                                  "height": isPortrait
+                                      ? bodyConstraints.maxWidth * .1
+                                      : bodyConstraints.maxHeight * .1,
+                                },
                                 EdgeInsets.all(
                                   isPortrait
                                       ? bodyConstraints.maxWidth * .025
@@ -331,6 +328,43 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
                                 ),
                               ],
                             ];
+
+                            final List<List<dynamic>> overlayChairsSize = [
+                              [
+                                {
+                                  "width": isPortrait
+                                      ? bodyConstraints.maxWidth * .8
+                                      : bodyConstraints.maxHeight * .4,
+                                  "height": isPortrait
+                                      ? bodyConstraints.maxWidth * .4
+                                      : bodyConstraints.maxHeight * .8,
+                                },
+                                EdgeInsets.symmetric(
+                                  horizontal: isPortrait
+                                      ? bodyConstraints.maxWidth * .05
+                                      : 0,
+                                  vertical: isPortrait
+                                      ? 0
+                                      : bodyConstraints.maxHeight * .05,
+                                )
+                              ],
+                              [
+                                {
+                                  "width": isPortrait
+                                      ? bodyConstraints.maxWidth * .2
+                                      : bodyConstraints.maxHeight * .2,
+                                  "height": isPortrait
+                                      ? bodyConstraints.maxWidth * .2
+                                      : bodyConstraints.maxHeight * .2,
+                                },
+                                EdgeInsets.all(
+                                  isPortrait
+                                      ? bodyConstraints.maxWidth * .05
+                                      : bodyConstraints.maxHeight * .05,
+                                ),
+                              ],
+                            ];
+
                             List<Widget> tablesView = [
                               Text(
                                 isPortrait ? "สหกรณ์" : "ส\nห\nก\nร\nณ์",
@@ -362,16 +396,193 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceAround,
                                           children: [
-                                            MyTable(tableChairSize, isPortrait),
-                                            MyTable(tableChairSize, isPortrait),
+                                            for (int j = 0; j < 2; j++)
+                                              InkWell(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                onTap: () async {
+                                                  _blurAnimationController
+                                                      .forward();
+                                                  await Navigator.of(context)
+                                                      .push(
+                                                    PageRouteBuilder(
+                                                      barrierDismissible: true,
+                                                      opaque: false,
+                                                      transitionDuration:
+                                                          const Duration(
+                                                        milliseconds: 500,
+                                                      ),
+                                                      reverseTransitionDuration:
+                                                          const Duration(
+                                                              milliseconds:
+                                                                  500),
+                                                      transitionsBuilder: (context,
+                                                              animation,
+                                                              secondaryAnimation,
+                                                              child) =>
+                                                          SlideTransition(
+                                                        position:
+                                                            animation.drive(
+                                                          Tween<Offset>(
+                                                            begin: const Offset(
+                                                              0,
+                                                              -1,
+                                                            ),
+                                                            end: const Offset(
+                                                              0,
+                                                              0,
+                                                            ),
+                                                          ).chain(
+                                                            CurveTween(
+                                                              curve: Curves
+                                                                  .elasticOut,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        child: child,
+                                                      ),
+                                                      pageBuilder: (
+                                                        context,
+                                                        animation,
+                                                        secondaryAnimation,
+                                                      ) {
+                                                        PopupTable popupTable =
+                                                            PopupTable(
+                                                          "$i-$j",
+                                                          overlayChairsSize,
+                                                          isPortrait,
+                                                          chairsStateProvider,
+                                                          ChairPositionModel(
+                                                              row: i,
+                                                              column: j == 1
+                                                                  ? true
+                                                                  : false,
+                                                              side: false,
+                                                              position: 0),
+                                                          updateData,
+                                                          true,
+                                                        );
+                                                        updateTableStatePopup = 
+                                                      },
+                                                    ),
+                                                  );
+                                                  _blurAnimationController
+                                                      .reverse();
+                                                },
+                                                child: Hero(
+                                                  tag: "$i-$j",
+                                                  child: MyTable(
+                                                    tableChairSize,
+                                                    isPortrait,
+                                                    chairsStateProvider,
+                                                    ChairPositionModel(
+                                                        row: i,
+                                                        column: j == 1
+                                                            ? true
+                                                            : false,
+                                                        side: false,
+                                                        position: 0),
+                                                    updateData,
+                                                    false,
+                                                  ),
+                                                ),
+                                              ),
                                           ],
                                         )
                                       : Column(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceAround,
                                           children: [
-                                            MyTable(tableChairSize, isPortrait),
-                                            MyTable(tableChairSize, isPortrait),
+                                            for (int j = 0; j < 2; j++)
+                                              InkWell(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                onTap: () async {
+                                                  _blurAnimationController
+                                                      .forward();
+                                                  await Navigator.of(context)
+                                                      .push(
+                                                    PageRouteBuilder(
+                                                      barrierDismissible: true,
+                                                      opaque: false,
+                                                      transitionDuration:
+                                                          const Duration(
+                                                        milliseconds: 500,
+                                                      ),
+                                                      reverseTransitionDuration:
+                                                          const Duration(
+                                                        milliseconds: 500,
+                                                      ),
+                                                      transitionsBuilder: (context,
+                                                              animation,
+                                                              secondaryAnimation,
+                                                              child) =>
+                                                          SlideTransition(
+                                                        position:
+                                                            animation.drive(
+                                                          Tween<Offset>(
+                                                            begin: const Offset(
+                                                              0,
+                                                              -1,
+                                                            ),
+                                                            end: const Offset(
+                                                              0,
+                                                              0,
+                                                            ),
+                                                          ).chain(
+                                                            CurveTween(
+                                                              curve: Curves
+                                                                  .elasticOut,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        child: child,
+                                                      ),
+                                                      pageBuilder: (
+                                                        context,
+                                                        animation,
+                                                        secondaryAnimation,
+                                                      ) =>
+                                                          Hero(
+                                                        tag: "$i-$j",
+                                                        child: MyTable(
+                                                          overlayChairsSize,
+                                                          isPortrait,
+                                                          chairsStateProvider,
+                                                          ChairPositionModel(
+                                                              row: i,
+                                                              column: j == 1
+                                                                  ? true
+                                                                  : false,
+                                                              side: false,
+                                                              position: 0),
+                                                          updateData,
+                                                          true,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                  _blurAnimationController
+                                                      .reverse();
+                                                },
+                                                child: Hero(
+                                                  tag: "$i-$j",
+                                                  child: MyTable(
+                                                    tableChairSize,
+                                                    isPortrait,
+                                                    chairsStateProvider,
+                                                    ChairPositionModel(
+                                                        row: i,
+                                                        column: j == 1
+                                                            ? true
+                                                            : false,
+                                                        side: false,
+                                                        position: 0),
+                                                    updateData,
+                                                    false,
+                                                  ),
+                                                ),
+                                              ),
                                           ],
                                         )
                               ],
@@ -468,6 +679,7 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
 
   @override
   void dispose() {
+    connectServer = false;
     _blurAnimationController.dispose();
     _suggestScrollController.dispose();
     _tablesScrollController.dispose();

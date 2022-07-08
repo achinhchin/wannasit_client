@@ -28,6 +28,16 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BC8F1B8B2875638D00462142 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -47,6 +57,19 @@
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9E157A187CBCB03A9746F4E0 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		BC0DC2E8286D20D5006349F3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		BC8F1B562875638D00462142 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		BC8F1B612875638D00462142 /* RunnerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerApp.swift; sourceTree = "<group>"; };
+		BC8F1B632875638D00462142 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		BC8F1B652875638D00462142 /* NotificationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationController.swift; sourceTree = "<group>"; };
+		BC8F1B672875638D00462142 /* NotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationView.swift; sourceTree = "<group>"; };
+		BC8F1B692875638D00462142 /* ComplicationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComplicationController.swift; sourceTree = "<group>"; };
+		BC8F1B6B2875638D00462142 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		BC8F1B6E2875638D00462142 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		BC8F1B702875638D00462142 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BC8F1B712875638D00462142 /* PushNotificationPayload.apns */ = {isa = PBXFileReference; lastKnownFileType = text; path = PushNotificationPayload.apns; sourceTree = "<group>"; };
+		BC8F1B7A2875638D00462142 /* wannasitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = wannasitTests.swift; sourceTree = "<group>"; };
+		BC8F1B842875638D00462142 /* wannasitUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = wannasitUITests.swift; sourceTree = "<group>"; };
+		BC8F1B862875638D00462142 /* wannasitUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = wannasitUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		C7CE2B6CE4F6592F4BA86B95 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		E24A3C86D8C8EF96AF9B780F /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -89,6 +112,10 @@
 			children = (
 				9740EEB11CF90186004384FC /* Flutter */,
 				97C146F01CF9000F007C117D /* Runner */,
+				BC8F1B552875638B00462142 /* wannasit */,
+				BC8F1B602875638D00462142 /* wannasit WatchKit Extension */,
+				BC8F1B792875638D00462142 /* wannasitTests */,
+				BC8F1B832875638D00462142 /* wannasitUITests */,
 				97C146EF1CF9000F007C117D /* Products */,
 				4C6A41B25D8E447BE06D309B /* Pods */,
 				C94BC0EA5F3FDACCF9DA063A /* Frameworks */,
@@ -119,6 +146,55 @@
 			path = Runner;
 			sourceTree = "<group>";
 		};
+		BC8F1B552875638B00462142 /* wannasit */ = {
+			isa = PBXGroup;
+			children = (
+				BC8F1B562875638D00462142 /* Assets.xcassets */,
+			);
+			path = wannasit;
+			sourceTree = "<group>";
+		};
+		BC8F1B602875638D00462142 /* wannasit WatchKit Extension */ = {
+			isa = PBXGroup;
+			children = (
+				BC8F1B612875638D00462142 /* RunnerApp.swift */,
+				BC8F1B632875638D00462142 /* ContentView.swift */,
+				BC8F1B652875638D00462142 /* NotificationController.swift */,
+				BC8F1B672875638D00462142 /* NotificationView.swift */,
+				BC8F1B692875638D00462142 /* ComplicationController.swift */,
+				BC8F1B6B2875638D00462142 /* Assets.xcassets */,
+				BC8F1B702875638D00462142 /* Info.plist */,
+				BC8F1B712875638D00462142 /* PushNotificationPayload.apns */,
+				BC8F1B6D2875638D00462142 /* Preview Content */,
+			);
+			path = "wannasit WatchKit Extension";
+			sourceTree = "<group>";
+		};
+		BC8F1B6D2875638D00462142 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				BC8F1B6E2875638D00462142 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		BC8F1B792875638D00462142 /* wannasitTests */ = {
+			isa = PBXGroup;
+			children = (
+				BC8F1B7A2875638D00462142 /* wannasitTests.swift */,
+			);
+			path = wannasitTests;
+			sourceTree = "<group>";
+		};
+		BC8F1B832875638D00462142 /* wannasitUITests */ = {
+			isa = PBXGroup;
+			children = (
+				BC8F1B842875638D00462142 /* wannasitUITests.swift */,
+				BC8F1B862875638D00462142 /* wannasitUITestsLaunchTests.swift */,
+			);
+			path = wannasitUITests;
+			sourceTree = "<group>";
+		};
 		C94BC0EA5F3FDACCF9DA063A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -142,6 +218,7 @@
 				9705A1C41CF9048500538489 /* Embed Frameworks */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
 				449A42A5243CD27FD83274EE /* [CP] Embed Pods Frameworks */,
+				BC8F1B8B2875638D00462142 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
@@ -158,6 +235,7 @@
 		97C146E61CF9000F007C117D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 1340;
 				LastUpgradeCheck = 1300;
 				ORGANIZATIONNAME = "";
 				TargetAttributes = {
